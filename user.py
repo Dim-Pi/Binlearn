@@ -1,5 +1,5 @@
-
-
+from sys import path
+from list import list_get as glist
 from mysql.connector import connect
 
 sql = connect (
@@ -29,11 +29,11 @@ class user :
     def users() :
         users1 = {}
 
-        db.execute("SELECT * FROM users")
+        db.execute("SELECT * FROM user")
         alluser = db.fetchall()
 
         for q in alluser :
-            users1[q[0]] = {'name' : q[1]}
+            users1[q[0]] = {'name' : q[1] , 'mode' : q[2]}
             
         
         return users1 
@@ -41,7 +41,7 @@ class user :
     def add_user (self ,name) :
 
         self.mode = 'name'
-        db.execute ('INSERT INTO users (id  ,name) VALUES  ("%s"  ,"%s") '  % (self.id ,name))
+        db.execute ('INSERT INTO user (id  ,name ,mode) VALUES  ("%s"  ,"%s" ,"%s") '  % (self.id ,name,self.mode))
         sql.commit()
 
 
@@ -51,14 +51,25 @@ class user :
         if m == 0:
             return self.mode
         else :
+            
             self.mode = m 
-    
+            db.execute ('update user set mode = "%s" where id = "%s" '  % (self.mode ,self.id))
+            sql.commit()
 
     def set_name (self,name0):
 
         self.name = name0
-        db.execute ('update users set name = "%s" where id = "%s" '  % (name0 ,self.id))
+        db.execute ('update user set name = "%s" where id = "%s" '  % (name0 ,self.id))
         sql.commit()
+
+
+    def get_id (id):
+
+        db.execute('SELECT * FROM user where id="%s"' %id)
+        iuser = db.fetchall()
+
+        return glist(glist(iuser,0,''),1,'')
+
         
 
     

@@ -79,7 +79,7 @@ class Client:
                 response_json = json.loads(response.text)
                 if 'resultCode' in response_json:
                     if response_json['resultCode'] == 200:
-                        print ('send:  %s' %post_data)
+                        
                         return [False, 'OK']
                     else:
                         if 'resultMessage' in response_json:

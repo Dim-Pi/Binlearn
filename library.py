@@ -50,8 +50,11 @@ def convertpe (text):
 
 
 
+
+
 def convertep (text):
 
+    from re import sub
 
     con_dic = {
 
@@ -66,54 +69,14 @@ def convertep (text):
 
 
 
-
     }
 
+    rtext = text
+    for q in con_dic:
 
+        rtext = sub ('(%s)'%q , con_dic[q] ,rtext)
 
-    newtext = ''
-
-    sss = False
-
-    
-    
-    text23 = [[''],[' '],['  ']]
-    for text2 in text23 :
-        
-        
-        qqq = False
-
-
-
-        for q in text :
-
-            if  len (text2 [len (text2) - 1]) < 3 :
-                text2 [len (text2) - 1] += q
-            elif len (text2 [len (text2) - 1]) == 3 :
-                text2.append (q)
-
-        for q in text2 :    
-
-            if q in con_dic :
-                newtext += con_dic [q]
-                qqq = True
-                sss = True
-            else:
-                newtext += q
-            
-
-    
-
-        if qqq == True :
-            break 
-        else :
-            newtext = ''
-        
-    if sss == False :
-        newtext = text
-
-
-    return newtext
+    return rtext
 
 
 
@@ -165,6 +128,29 @@ def b_per (text) :
 
     return u 
             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def give_data ():
+    from mysql.connector import connect
+
+
+
+
+
+
 
 
 

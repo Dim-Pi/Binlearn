@@ -5,7 +5,7 @@ path.append('..')
 
 from client import Client
 from library import convertpe , convertep
-
+from user import user 
 
 
 
@@ -20,11 +20,11 @@ def massages ():
 
    try:
       messages = bot1.get_messages()
-      for msg in messages:
+      for msg in messages: 
 
          msg ['body'] = convertpe (msg ['body'])
-
-
+         print ("(receive)   %s: %s "  %(user.get_id(msg['from']),msg['body']))
+         
          yield (msg)
 
    except Exception as e:
@@ -32,8 +32,21 @@ def massages ():
 
 
 
+ 
+ 
+def esend (text ,id):
+   
+   send_message ({"to":id,"type":"TEXT","body": str(text)})
+
+
 def send_message (data):
-   data ['body'] = convertep( data ['body'] )
+
+
+   if 'keyboard' not in data :
+      data ["keyboard"] = []
+   if 'body' in data:
+      data ['body'] = convertep( data ['body'] )
+   print ('(send)      %s: %s '% (user.get_id(data['to']) ,data['body']) , '\n')
    bot1.send_message ( data )
 
 
