@@ -39,17 +39,10 @@ def esend (text ,id):
    send_message ({"to":id,"type":"TEXT","body": str(text)})
 
 
-def send_message (data):
+def send_message (data0):
 
+   data = {'to':data0['to'] , 'type' : 'TEXT' , 'body' : data0.get('body','') , 'keyboard':data0.get ('keyboard',[]) }
 
-   if 'keyboard' not in data :
-      data ["keyboard"] = []
-   if 'body' in data:
-      data ['body'] = convertep( data ['body'] )
-   else:
-      data['body'] = ''
-   if 'type' not in data :
-      data['type'] = "TEXT"
    print ('(send)      %s: %s '% (user.get_id(data['to']) ,data['body']) )
    bot1.send_message ( data )
 
