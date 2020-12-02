@@ -101,6 +101,7 @@ def edit (id ,msg) :
 
 
         elif imd[5] == '4' :
+            
 
             lw = it.modeed
 
@@ -536,7 +537,9 @@ for id , msg in input_msg() :
     uupdate (udict)
     print ('Ok!!\n')
     if udict[id].ready == 'True':
-        if '//' not in msg :
+        if udict[id].mode == 'wait0':
+            udict[id].smode('wait')
+        elif '//' not in msg :
             if 'edit' in udict[id].mode  :
                 edit (id ,msg)
             elif 'wait' == udict[id].mode :

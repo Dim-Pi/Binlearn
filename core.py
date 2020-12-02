@@ -21,6 +21,7 @@ def massages ():
    try:
       messages = bot1.get_messages()
       for msg in messages: 
+         #print (msg)
 
          msg ['body'] = convertpe (msg ['body'])
          print ("(receive)   %s: %s "  %(user.get_id(msg['from']),msg['body']))
@@ -39,14 +40,22 @@ def esend (text ,id):
    send_message ({"to":id,"type":"TEXT","body": str(text)})
 
 
+
+
+def send_message0 (data0):
+
+   pass
+
+
+
+
 def send_message (data0):
 
-   data = {'to':data0['to'] , 'type' : 'TEXT' , 'body' : data0.get('body','') , 'keyboard':data0.get ('keyboard',[]) }
+   data = {'to':data0['to'] , 'type' : 'TEXT' , 'body' : convertep(data0.get('body','')) , 'keyboard':data0.get ('keyboard',[]) }
 
    print ('(send)      %s: %s '% (user.get_id(data['to']) ,data['body']) )
+
    bot1.send_message ( data )
-
-
 
 
 

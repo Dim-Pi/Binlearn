@@ -166,11 +166,11 @@ def massage ():
 
         
         
-
+        
         b_user (input ['from']  ,input ['body'] ,ulist)
         barr (input ['from']  ,input ['body'] ,ulist)
         if ulist[input ['from']].ready == 'True':
-            if '//' in input ['body'] :
+            if '///' in input ['body'] :
                 user_control (input ['from']  ,input ['body'])
         #print (str(input) + ulist [input ['from']].name)
 

@@ -46,13 +46,13 @@ def exam (it,msg):
 
         if msg == 'True':
             send ('عالیه')
-            it.comeat({'mode':'wait','ready':'True','flo':5.2,'modint':0})
+            it.comeat({'mode':'wait0','ready':'True','flo':5.2,'modint':0})
         elif msg == 'False':
             send ('(:(:مهم نیست:):)')
-            it.comeat({'mode':'wait','ready':'True','flo':5.2,'modint':0})
+            it.comeat({'mode':'wait0','ready':'True','flo':5.2,'modint':0})
         elif msg == 'Frue':
             send ('نظر منم همینه')
-            it.comeat({'mode':'wait','ready':'True','flo':5.2,'modint':0})
+            it.comeat({'mode':'wait0','ready':'True','flo':5.2,'modint':0})
         else:
             osend ({'body':'جان؟؟','type':'text','to':id,'keyboard':key1,})
     
@@ -89,15 +89,20 @@ uupdate(ulist0)
 
 def input_msg ():
 
+    
+
     for id ,text in massage():
 
         uupdate(ulist0)
+        it = ulist0[id]
+        
+        if ('name' in it.mode) or ('start' in it.mode) :
+      
 
-        it = ulist0 [id]
 
-        driver (it ,text)
-
-        yield (id , text)
+            driver (it ,text)
+        else :
+            yield (id , text)
 
    
 
