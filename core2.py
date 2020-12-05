@@ -4,7 +4,7 @@ path.append('..')
 
 from client import Client
 from library import convertpe , convertep
-from user import user 
+
 
 
 
@@ -37,7 +37,7 @@ def massages ():
          #print (msg)
 
          msg ['body'] = convertpe (msg ['body'])
-         print ("(receive)   %s: %s "  %(user.get_id(msg['from']),msg['body']))
+         print ("(receive)   : %s "  %msg['body'])
          
          yield (msg)
 
@@ -66,7 +66,7 @@ def send_message (data0):
 
    data = {'to':data0['to'] , 'type' : 'TEXT' , 'body' : convertep(data0.get('body','')) , 'keyboard':data0.get ('keyboard',[]) }
 
-   print ('(send)      %s: %s '% (user.get_id(data['to']) ,data['body']) )
+   print ('(send)      : %s '% (data['body']) )
 
    bot1.send_message ( data )
 

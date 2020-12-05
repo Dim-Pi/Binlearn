@@ -129,12 +129,12 @@ def words_fa (q):
     
     db.execute ('select mode ,en ,num from words where fa="%s"'%q) 
     try :
-        all = db.fetchall () [0]
+        al = db.fetchall () [0]
     except Exception as e:
         return None
         pass
 
-    return word(all[1],q,all[2],all[0])
+    return word(al[1],q,al[2],al[0])
 
 
 

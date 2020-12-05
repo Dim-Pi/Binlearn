@@ -2,6 +2,10 @@ from sys import path
 from list import list_get as glist
 from mysql.connector import connect
 from words import words_fa
+from core2 import send_message as osend
+
+
+
 
 
 sql = connect (
@@ -60,6 +64,28 @@ class user :
         
         db.execute ('INSERT INTO user (id  ,name ,mode) VALUES  ("%s"  ,"%s" ,"%s") '  % (id ,name,'name'))
         sql.commit()
+
+
+
+    def wsync (self):
+
+
+        db.execute ('select word1 ,word2 ,word3 ,word4 ,word5 from user where id="%s"'   %self.id)
+        w0rds = db.fetchall() [0]
+
+
+
+        self.word1 = words_fa(glist(w0rds ,0 ,None))
+        self.word2 = words_fa(glist(w0rds ,1 ,None))
+        self.word3 = words_fa(glist(w0rds ,2 ,None))
+        self.word4 = words_fa(glist(w0rds ,3 ,None))
+        self.word5 = words_fa(glist(w0rds ,4 ,None))
+        
+
+
+
+
+
 
 
 
@@ -123,6 +149,28 @@ class user :
 
     def smodeed (self ,modeed):
         self.modeed = modeed
+
+
+
+
+
+    def send (self ,data):
+
+        osend ({'to':self.id,'body':data.get('body',''),'type':'TEXT','keyboard':data.get('keyboard',[])})
+
+
+
+
+
+    def wait (self):
+
+        self.smode ('wait')
+        db.execute ('update user set flo=5.2 where id="%s"'  %self.id)
+
+
+
+
+
 
 
 

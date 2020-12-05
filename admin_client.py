@@ -4,6 +4,7 @@ from start_client import input_msg
 from core import send_message as osend
 from words import mianword
 from list import b_dict , list_get
+from library import convertep as convert
 import words
 
 
@@ -327,7 +328,7 @@ def chek (id ,msg):
     it = udict[id]
     imd = it.mode
 
-    key01 = [[{'text':'نه بابا کار دارم','command':'//False'},{'command':'//True','text':'چطوری کمکت کنم؟'}]]
+    key01 = [[{'text':'نه بابا کار دارم','command':'//FALSE'},{'command':'//True','text':'چطوری کمکت کنم؟'}]]
     ms = 'آفرین احسنت کاملا درسته'
     fms2 = lambda en ,fa : '%s :\n%s' %( en ,fa )
     eee = 0
@@ -335,11 +336,13 @@ def chek (id ,msg):
     while eee == 0 :
         try :
 
+            it.wsync()
             fawor = it.get_words() [0]
             eee = 1
 
         except Exception as e:
-            sleep (10)
+            
+            sleep (1)
             eee = 0
             continue
 
@@ -355,22 +358,34 @@ def chek (id ,msg):
 
         mw = mianword (q)
 
-        
+        if type(q) == list :
+
+            q = ','.join(q)
+
+        q1 = convert (q)
+        msg1 = convert (msg)
+
+
+
         if itw.mode  == 'True' :
 
-            if msg in q :
+            if msg1 in q.split(',') :
                 ad += 100
                 ao = aa
                 aw = itw
                 it.chek_complet()
+                break 
 
         elif itw.mode == 'False' :
 
-            if (msg == q) or (msg in q) :
+            if (msg1 == q1) or (msg in q1) :
                 ad += 1
                 ao = aa
                 aw = itw
                 it.chek_complet()
+                break
+
+
 
     if ad == 1 :
 
@@ -419,6 +434,10 @@ def chek (id ,msg):
 
 
 
+
+
+
+
 def code (id ,msg):
 
     it = udict[id]
@@ -427,8 +446,8 @@ def code (id ,msg):
 
 
     if msg == '//FALSE':
-        it.smode('wait')
-        osend ({'to':id,'keyboard':[]})
+        it.wait()
+        
 
 
     elif search (r"//(\w/.)",msg) != None:
@@ -459,7 +478,7 @@ def code (id ,msg):
 
 
             if msg == '//True':
-                it.modeed().save()
+                it.modeed.save()
                 osend ({'body':'دمت گرممم','to':id})
             elif msg == '//False':
                 it.smode('editB3')
@@ -536,10 +555,13 @@ for id , msg in input_msg() :
 
     uupdate (udict)
     print ('Ok!!\n')
+    
+    
+    if udict[id].mode == 'wait0':
+        udict[id].smode('wait')
+        
     if udict[id].ready == 'True':
-        if udict[id].mode == 'wait0':
-            udict[id].smode('wait')
-        elif '//' not in msg :
+        if '//' not in msg :
             if 'edit' in udict[id].mode  :
                 edit (id ,msg)
             elif 'wait' == udict[id].mode :
