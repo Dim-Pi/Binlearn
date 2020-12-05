@@ -100,9 +100,8 @@ def edit (id ,msg) :
 
 
 
-
         elif imd[5] == '4' :
-            
+
 
             lw = it.modeed
 
