@@ -3,6 +3,8 @@ from sys import path
 from core import massages , send_message
 from user import user
 from mode import mode as md 
+from admin_pro import admin2
+from atoken import dmn 
 #from library import b_user
 
 
@@ -174,7 +176,31 @@ def massage ():
                 user_control (input ['from']  ,input ['body'])
         #print (str(input) + ulist [input ['from']].name)
 
-        yield ((input ['from']  ,input ['body']))
+        it = ulist[input ['from']]
+        if ulist [ input ['from'] ].mode == 'block' :
+            
+            send_message ({'type':'TEXT','body':'برو کار دارم','to':input ['from']})
+
+        elif  input ['body'] == 'admin' or "admin" in it.mode :
+
+            if it.id == dmn() :
+
+                it.lmsg = input ['body']
+                admin2(ulist)
+
+            else :
+
+                try :
+                    it.wait()
+                except :
+                    pass
+
+                send_message ({'body':'چی میگی؟؟','to':input['from']})
+                
+
+        else :
+
+            yield ((input ['from']  ,input ['body']))
 
     
 

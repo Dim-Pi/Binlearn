@@ -3,8 +3,9 @@ from sys import path
 path.append('..')
 
 from client import Client
-from library import convertpe , convertep
+from library import convertpe , convertep , gname ,rsend ,rrese
 from user import user 
+from atoken import token 
 
 
 
@@ -23,11 +24,10 @@ from user import user
 
 
 
-
-bot_token = 'WHPulnGQWSGB8zSaKT31ARIeE4iJdfs-TkT-O4itKkwOp9iCJGxenVF7A2PIsqk37XLvYC728J1eG08WVVwK9HfnAudfGl3YF899eG86LX_mqYIC5MdzFVJBTsXmS0W417_5MQaKZhKklfHg'
+bot_token = token()
 
 bot1 = Client(bot_token)
-bot1.RETRY_DELAY = 1
+bot1.RETRY_DELAY = 5
 
 def massages ():
 
@@ -36,9 +36,11 @@ def massages ():
       for msg in messages: 
          #print (msg)
 
+         print ('\n' + gname(msg['from']) + ' :')
+         print (rrese(msg['body']))
          msg ['body'] = convertpe (msg ['body'])
-         print ("(receive)   %s: %s "  %(user.get_id(msg['from']),msg['body']))
-         
+
+
          yield (msg)
 
    except Exception as e:
@@ -46,7 +48,10 @@ def massages ():
 
 
 
- 
+
+
+
+
  
 def esend (text ,id):
    
@@ -65,8 +70,8 @@ def send_message0 (data0):
 def send_message (data0):
 
    data = {'to':data0['to'] , 'type' : 'TEXT' , 'body' : convertep(data0.get('body','')) , 'keyboard':data0.get ('keyboard',[]) }
-
-   print ('(send)      %s: %s '% (user.get_id(data['to']) ,data['body']) )
+   print ('\n' + convertep(gname(data0['to'])) + ' :')
+   print ( rsend (data['body']) )
 
    bot1.send_message ( data )
 

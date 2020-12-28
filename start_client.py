@@ -46,21 +46,21 @@ def exam (it,msg):
 
         if msg == 'True':
             send ('عالیه')
-            it.comeat({'mode':'wait0','ready':'True','flo':5.2,'modint':0})
+            ystart (it)
         elif msg == 'False':
             send ('(:(:مهم نیست:):)')
-            it.comeat({'mode':'wait0','ready':'True','flo':5.2,'modint':0})
+            ystart (it)
         elif msg == 'Frue':
             send ('نظر منم همینه')
-            it.comeat({'mode':'wait0','ready':'True','flo':5.2,'modint':0})
+            ystart (it)
         else:
             osend ({'body':'جان؟؟','type':'text','to':id,'keyboard':key1,})
     
 
 
 
-
-
+def ystart (it):
+    it.comeat({'mode':'wait0','ready':'True','flo':5.2,'modint':0,'qmode':'<.>'})
 
 
 

@@ -1,20 +1,26 @@
 from sys import path
 from list import list_get as glist
 from mysql.connector import connect
-from words import words_fa
+from words import word
 from core2 import send_message as osend
+from timerdef import timerdef
+from atoken import DBInformation as DBI
 
 
 
+
+
+
+
+words_fa = word.words_fa
 
 
 sql = connect (
-    user = 'pyprog',
-    password = 'itpas',
-    host = 'localhost',
-    database = 'bot'
-
+    user = DBI.usr(),
+    password = DBI.pas(),
+    database = DBI.dbn()
 )
+
 
 db = sql.cursor()
 
@@ -23,11 +29,11 @@ db = sql.cursor()
 
 class user :
 
-    
+    udic = dict()
 
     def __init__ (self,id):
 
-        db.execute('SELECT id ,name ,mode ,ready ,fmode ,fmode2 ,fmode3 ,mode2 ,word1,word2,word3,word4,word5 FROM user where id="%s"'%id)
+        db.execute('SELECT id ,name ,mode ,ready ,fmode ,fmode2 ,fmode3 ,mode2 ,word1,word2,word3,word4,word5 ,sendtime FROM user where id="%s"'%id)
         ius = db.fetchall() [0]
 
         self.id = id
@@ -43,6 +49,7 @@ class user :
         self.word3 = words_fa(glist(ius ,10 ,None))
         self.word4 = words_fa(glist(ius ,11 ,None))
         self.word5 = words_fa(glist(ius ,12 ,None))
+        self.sendtime = int(ius [13])
         self.modeed = ''
 
     
@@ -59,10 +66,11 @@ class user :
         
         return users1 
     
+
     def add_user (id ,name) :
 
         
-        db.execute ('INSERT INTO user (id  ,name ,mode) VALUES  ("%s"  ,"%s" ,"%s") '  % (id ,name,'name'))
+        db.execute ('INSERT INTO user (id  ,name ,mode ,word6 ,word7 ,word8 ,word9 ,word10 ,sendtime) VALUES  ("%s"  ,"%s" ,"%s" ,"False" ,"False" ,"False" ,"False" ,"False" ,5) '  % (id ,name,'name'))
         sql.commit()
 
 
@@ -159,13 +167,82 @@ class user :
         osend ({'to':self.id,'body':data.get('body',''),'type':'TEXT','keyboard':data.get('keyboard',[])})
 
 
+    def word_save(self):
+
+        self.modeed.save()
+
+
+
+ 
+ 
+ 
+    def sync (self):
+
+
+
+        db.execute ("select modint from user where id='%s' "  %  str(self.id))
+        n = db.fetchall() [0] [0]
+
+        tdata = []
+
+        for q  in  range( n*5 +1 , ((n + 1)*5) +1 ):
+
+            db.execute ('select fa from words where num=%i' %q)
+            ert = db.fetchall() [0]
+            tdata.append (ert [0])
+
+        slist = []
+
+        q = 0
+
+        for qfa in tdata :
+
+            q += 1
+
+            db.execute('update user set word%i="%s" where id="%s" '
+                    %(                      q  ,qfa          ,self.id         ) 
+            )
+            sql.commit()
+
+            
+
+
+
+
+
+
+
+
+
+
+
+    def okword (self ,num):
+
+        db.execute ('update user set word%i="Completed!!"  where id="%s"'  %(int(num) + 5 ,self.id)  )
+        sql.commit()
+
+
+
+
+
+
+
+
 
 
 
     def wait (self):
 
         self.smode ('wait')
-        db.execute ('update user set flo=5.2 where id="%s"'  %self.id)
+        try :
+            f = self.flo 
+        except :
+            f = 0
+        if f != 1.1 :
+            self.flo = 4.7
+            db.execute ('update user set flo=4.7 where id="%s"'  %self.id)
+            sql.commit()
+            timerdef(imode=1)
 
 
 
@@ -200,19 +277,51 @@ class user :
                 self.word4 = dic ['word4']
             if 'word5' in dic:
                 self.word5 = dic ['word5']
+            if 'sendtime' in dic:
+                self.sendtime = dic ['sendtime']
+            if 'flo' in dic:
+                self.flo = dic ['flo']
+            
  
 
         setor = 'update user set '
         
         for q in dic :
-            setor +=  '%s="%s" , ' %(q,dic[q])
-        
+            if type(dic[q]) == str :
+                setor +=  '%s="%s"   ,' %(q,dic[q])
+            elif type(dic[q]) == int :
+                setor +=  '%s=%i   ,' %(q,dic[q])
+            elif type(dic[q]) == float :
+                setor +=  '%s=%f   ,' %(q,dic[q])
+
+
         setor = setor [ : len (setor) - 2]
 
         setor += ' where id="%s"'%self.id
 
         db.execute(setor)
         sql.commit()
+        dbsync()
+
+
+
+
+    def next (self) :
+
+        dbsync()
+
+        db.execute("select modint from user where id='%s'" %self.id)
+        bar = db.fetchall () [0] [0]
+        
+        
+        db.execute("update user set tday='True' , modint=%i ,word6='%s' ,word7='%s' ,word8='%s' ,word9='%s' ,word10='%s' where id='%s'"  %(  int( bar )+1 ,'False' ,'False' ,'False' ,'False' ,'False' ,self.id)   )
+        sql.commit()
+        
+        
+
+
+
+
 
 
 
@@ -220,21 +329,25 @@ class user :
 
     def chek_complet (self):
 
-        db.execute('select word1,word2,word3,word4,word5 ,modint from user where id="%s"'%self.id )
+        db.execute('select word6,word7,word8,word9,word10 ,modint from user where id="%s"'%self.id )
         bar = db.fetchall() [0]
-        if bar[0]=='True' and bar[1]=='True' and bar[2]=='True' :
-            if bar[3]=='True' and bar[4]=='True':
-                db.execute('update user set tday="True" , modint=%i where id="%s"'%(bar[5]+1,self.id))
+        if bar[1]=='Completed!!' and bar[2]=='Completed!!' and bar[3]=='Completed!!' :
+        
+            if bar[4]=='Completed!!' and bar[0]=='Completed!!':
+                
+                return True
 
+        return False
 
 
     def get_words (self):
 
         sql = connect (
-            user = 'pyprog',
-            password = 'itpas',
-            database = 'bot'
+            user = DBI.usr(),
+            password = DBI.pas(),
+            database = DBI.dbn()
         )
+
 
         db = sql.cursor()
         db.execute('select tday from user where id="%s"' %self.id)
@@ -252,11 +365,93 @@ class user :
 
 
 
-    
+
+
+    def b_word (self ,word):
+
+        unum = word.unum()
+        dbsync()
+        db.execute("select word%i from user where id='%s'"%(unum+5,self.id))
+        try :
+            v = db.fetchall() [0] [0]
+            if v == "Completed!!" :
+                return True
+            else:
+                return False
+        except:
+            pass
+
+
+        
+
+    def block (self) :
+
+        if self.mode != 'block':
+            self.bacmode = self.mode
+            self.smode ('block')
+
+        else :
+            self.smode (self.bacmode)
+            
+
+
+
+
+
+
+
+
+
+
+    def dontwords(self):
+
+        dbsync()
+        alist = []
+        list = self.words()
+        for q in list :
+            if not self.b_word(q):
+                alist.append (q)
+        
+        return alist
+
+
+
+
+
+
+    def __del__ (self) :
+        dbsync ()
+        db.execute("delete from user where id='%s'"%self.id)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 o = 1
+def dbsync():
+
+    
+    sql = connect (
+        user = 'pyprog',
+        password = 'itpas',
+        host = 'localhost',
+        database = 'bot'
+
+ )
+
+    db = sql.cursor()
+
+
+
 
 
 

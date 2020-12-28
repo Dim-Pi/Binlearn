@@ -1,23 +1,26 @@
 from mysql.connector import connect
 from sys import path
 from library import convertep , convertpe , b_per
+from atoken import DBInformation as DBI
 
 
 
 sql = connect (
-    user='pyprog',
-    password='itpas',
-    database='bot'
+    user = DBI.usr(),
+    password = DBI.pas(),
+    database = DBI.dbn()
 )
 
 
-db = sql.cursor()
 
+db = sql.cursor()
+wdic = dict()
 
 
 class word :
-    
-    
+
+
+        
     def __init__ (self,en,fa,num,mode):
         self.mode = mode
         self.en = en
@@ -27,8 +30,14 @@ class word :
 
     def edit (self , newfa):
         try :
-            self.fa = newfa
-            db.execute ('update words set fa="%s" ,mode="True" where num=%i' %(','.join(newfa),self.num))
+            self.fa = convertep (newfa)
+
+            eeee = ''
+            for q in self.fa.split(','):
+                eeee += "%s," %q.strip()
+            self.fa = eeee [:-1]
+
+            db.execute ('update words set fa="%s" ,mode="True" where num=%i' %(convertpe(newfa),self.num))
             sql.commit()
             return True
         except :
@@ -37,20 +46,87 @@ class word :
     def add_fa (self ,newfa):
         try:
             
-            self.fa = self.fa + ',' + newfa
+            self.fa = self.fa + ',' + convertep(newfa)
 
-            db.execute ('update words set fa="%s" ,mode="True" where num=%i' %(self.fa,self.num))
+            eeee = ''
+            for q in self.fa.split(','):
+                eeee += ',%s' %q.strip()
+            self.fa = eeee [:-1]
+
+            db.execute ('update words set fa="%s" ,mode="True" where num=%i' %(convertpe(self.fa),self.num))
             sql.commit()
+            self.fa = convertep (self.fa)
             return True
         except :
             return False
+
+
+
+        
     def save (self):
 
+        self.mode = 'True'
         db.execute ('update words set  mode="True"  where num=%i' %(self.num))
         sql.commit()
 
 
     
+
+    
+    def words():
+
+        db.execute('select num ,en ,fa ,mode from words')
+
+
+        for q in db.fetchall():
+            wdic [q[0]] = word(q[1],convertep(q[2]),q[0],q[3])
+
+        return wdic
+
+
+
+
+    def unum (self):
+
+        dd = self.num // 5 
+        if dd == 0:
+            return 5
+        else:
+            return dd
+
+
+
+
+
+
+
+
+    def words_fa (q):
+
+
+
+        if q == None :
+            return None
+
+        db.execute ('select num from words where fa="%s"'%convertpe(q)) 
+        
+        try :
+            al = db.fetchall () [0]
+        except Exception as e:
+            return None
+            
+
+        return wdic[al[0]]
+    
+
+
+
+
+
+
+def lwords ():
+
+    return wdic
 
 
 
@@ -90,10 +166,9 @@ def words():
 
     db.execute('select num ,en ,fa ,mode from words')
 
-    wdic = dict()
 
     for q in db.fetchall():
-        wdic [q[0]] = word(q[1],q[2].split('<>'),q[0],q[3])
+        wdic [q[0]] = word(q[1],convertep(q[2]),q[0],q[3])
 
     return wdic
 
@@ -108,33 +183,24 @@ def words():
 def find_num (fa):
 
     if type(fa) == list :
-        ofa = '<>'.join(fa)
+        ofa = ','.join(fa)
     else:
         ofa = fa
 
-    db.execute('select num from words where fa="%s"' %ofa)
-    return db.fetchall () [0] 
+
+    uuuu = 1
+    while uuuu == 1:
+        try:
+
+            db.execute('select num from words where fa="%s"' %ofa)
+            rrrr = db.fetchall () [0]
+            uuuu = 0
+            return rrrr 
+        except Exception as e:
+
+            return None
 
 
-
-
-
-
-
-
-
-
-
-def words_fa (q):
-    
-    db.execute ('select mode ,en ,num from words where fa="%s"'%q) 
-    try :
-        al = db.fetchall () [0]
-    except Exception as e:
-        return None
-        pass
-
-    return word(al[1],q,al[2],al[0])
 
 
 
@@ -205,11 +271,13 @@ def get_data () :
             b += 1
 
 
+        
         sql = connect (
-            password = '1122'
-            , user = 'pyth'
-            , database = 'bot'
+            user = DBI.usr(),
+            password = DBI.pas(),
+            database = DBI.dbn()
         )
+        
 
         mydb = sql.cursor()
 
@@ -217,13 +285,15 @@ def get_data () :
 
         for en , fa in y :
 
+            num += 1
+
 
             mydb.execute ('INSERT INTO words (en  ,fa ,num ,mode) VALUES  ("%s"  ,"%s" ,%i ,"False") '  % (en  ,fa ,num))
 
             sql.commit()
 
 
-            num += 1
+            
 
 
 
@@ -232,6 +302,7 @@ def get_data () :
 
 
 
+words()
 
 
 

@@ -5,7 +5,9 @@ from core import send_message as osend
 from words import mianword
 from list import b_dict , list_get
 from library import convertep as convert
+from library import cnow
 import words
+from timerdef import timerdef
 
 
 
@@ -30,8 +32,56 @@ def uupdate (seter) :
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+def   chk_next (it) :
+
+    if it.chek_complet() :
+
+        if it.mode != 'next' :
+
+            it.comeat({'mode':'next','sendtime':cnow(),'flo':1.3})
+
+            sm = "خب مثل اینکه این قسمت تموم شد \n حالا چیکار کنیم؟"
+            key = [[{'text':"بریم قسمت بعد",'command':'//True'},{'text':"فعلا حوصله ندارم فردا بفرست",'command':'//False'}]]
+            it.send ({'body':sm , 'keyboard':key})
+
+        elif it.mode == 'next' :
+
+            if it.lmsg == '//True':
+
+                it.next ()
+                it.wait ()
+            elif it.lmsg == '//False':
+
+                it.next ()
+                it.comeat ({'mode':'wait' , 'flo':1.1 , 'sendtime':cnow()})
+
+
+
+
+
+
+
+
+
+
+
+
 def edit (id ,msg) :
     
+
+
+
 
 
     it = udict [id]
@@ -40,7 +90,7 @@ def edit (id ,msg) :
 
     if imd[4] == 'F':                                                                          # _______
                                                                                                #|
-        itw = it.editmode()                                                                    #| 
+        itw = it.modeed                                                                        #| 
                                                                                                #|_______
         if imd[5] == '0':                                                                      #|
                                                                                                #|
@@ -74,18 +124,19 @@ def edit (id ,msg) :
             newf = sub ('(،)',',',msg)
 
             im = lw.edit(newf)
+            it.sync()
 
             if im == True :
 
                 osend ({'type':'TEXT',"to":id,'body':"ممنون از کمکت"})
-                it.smode ('wait')
+                it.wait()
             else :
 
                 osend ({'type':'TEXT',"to":id,'body':"نفهمیدم چی شد ولی یک ارور مهکم خورد تو سرم!!"})
-                it.smode ('wait')
+                it.wait()
                 
             
-
+            chk_next (it)
 
 
 
@@ -100,26 +151,32 @@ def edit (id ,msg) :
 
 
 
-        elif imd[5] == '4' :
 
+        elif imd[5] == '4' :
+            
 
             lw = it.modeed
 
             newf = sub ('(،)',',',msg)
 
-            im = lw.ad_fa(newf)
+            im = lw.add_fa(newf)
+            it.sync()
 
             if im == True :
 
                 osend ({'type':'TEXT',"to":id,'body':"ممنون از کمکت"})
-                it.smode ('wait')
+                
+
+
             else :
 
                 osend ({'type':'TEXT',"to":id,'body':"نفهمیدم چی شد ولی یه هو یک ارور مهکم خورد تو سرم!!"})
-                it.smode ('wait')
+                
 
-
-
+            if it.chek_complet() :
+                chk_next (it)
+            else:
+                it.wait()
 
 
 
@@ -224,16 +281,20 @@ def edit (id ,msg) :
             newf = sub ('(،)',',',msg)
 
             im = lw.edit(newf)
+            it.sync()
+
 
             if im == True :
 
                 osend ({'type':'TEXT',"to":id,'body':"ممنون از کمکت"})
-                it.smode ('wait')
+                it.wait()
             else :
 
                 osend ({'type':'TEXT',"to":id,'body':"نفهمیدم چی شد ولی یک ارور مهکم خورد تو سرم!!"})
-                it.smode ('wait')
-          
+                it.wait()
+
+
+            chk_next (it)
 
 
         elif imd[5] == '4':
@@ -244,6 +305,9 @@ def edit (id ,msg) :
             it.smode ('editB6')
 
 
+
+
+
         elif imd[5] == '6' :
 
 
@@ -251,16 +315,23 @@ def edit (id ,msg) :
 
             newf = sub ('(،)',',',msg)
 
-            im = lw.ad_fa(newf)
+
+            im = lw.add_fa(newf)
+            it.sync()
+
+
 
             if im == True :
 
                 osend ({'type':'TEXT',"to":id,'body':"ممنون از کمکت"})
-                it.smode ('wait')
+                it.wait()
             else :
 
                 osend ({'type':'TEXT',"to":id,'body':"نفهمیدم چی شد ولی یه هو یک ارور مهکم خورد تو سرم!!"})
-                it.smode ('wait')
+                it.wait()
+
+
+            chk_next (it)
 
 
 
@@ -324,6 +395,11 @@ def chek (id ,msg):
 
     from time import sleep
 
+    if len(msg) < 4 :
+
+        msg = '0o35fgllfclkfi'
+
+
     it = udict[id]
     imd = it.mode
 
@@ -335,8 +411,16 @@ def chek (id ,msg):
     while eee == 0 :
         try :
 
+            
+            it.sync()
             it.wsync()
-            fawor = it.get_words() [0]
+            fawor = it.get_words()
+            if type (fawor)  ==  list :
+                fawor =  fawor [0]
+            else :
+                fawor = []
+                chk_next (it)
+
             eee = 1
 
         except Exception as e:
@@ -353,7 +437,13 @@ def chek (id ,msg):
     for q in fawor :
 
         aa += 1
-        itw = awords [words.find_num(q)[0] ]
+
+        eeee = words.find_num(q)[0]
+        print ('errrrrorrrr') 
+
+
+
+        itw = awords [eeee]
 
         mw = mianword (q)
 
@@ -368,20 +458,20 @@ def chek (id ,msg):
 
         if itw.mode  == 'True' :
 
-            if msg1 in q.split(',') :
+            if msg1 in q1.split(',') :
                 ad += 100
-                ao = aa
+                ao = str(aa)
                 aw = itw
-                it.chek_complet()
+                
                 break 
 
         elif itw.mode == 'False' :
 
-            if (msg1 == q1) or (msg in q1) :
+            if (msg1 == q1) or (msg1 in q1) :
                 ad += 1
-                ao = aa
+                ao = str(aa)
                 aw = itw
-                it.chek_complet()
+                
                 break
 
 
@@ -389,25 +479,24 @@ def chek (id ,msg):
     if ad == 1 :
 
         osend ({'body':ms , 'type':'TEXT' , 'to' : id , 'keyboard' : []})
-        it.comeat ({'mode':'//editF' , 'word%i'%(ao+5):'True'})
-        it.smodeed ( str (ao) )
+        it.comeat ({'mode':'//editF' , 'word%i'%(int(ao)+5):'True'})
+        it.smodeed ( aw )
 
         ms2 = 'زحمتت میتونی یه کمکی بکنی؟؟'
         osend ({'body':ms2 ,'type':'TEXT' ,'to':id ,'keyboard':key01})
+        it.okword(ao)
 
 
     elif ad == 100 : 
 
+    
+        ms5 = 'دمت گرم بابا'
+        it.okword(ao)
+        it.send({'body':ms5})
+        it.wait()
+        chk_next (it)
 
-        ms5 = 'کاملا درسته\nاحسنت\nلطف کن اگه میتونی یه نگاهی کن ببین معانی درسته یا نه'
-        osend ({'body':ms5 , 'type':'TEXT' , 'to': id })
-        
-        ms6 = 'میتونی این لطف رو بکنی؟؟'
-        key5 = [[{'text':'آره بابا کاری نداره','command':'True'},{'text':'نه شرمندت وقت ندارم','command':'False'}]]
-        osend ({'body':ms6 ,'type' :'TEXT' ,'to' :id ,'keyboard':key5})
-        it.comeat ({'mode':'editgoo0d0','fmode3':str(aw.num), 'word%i'%ao:'True'})
 
-        
     elif ad == 0 :
 
         ms8 = 'به نظرم یه اشتباه تایپی کردی یا یه همچین چیزی حالا با دقت بیشتر دوباره امتحان کن'
@@ -445,13 +534,16 @@ def code (id ,msg):
 
 
     if msg == '//FALSE':
-        it.wait()
+        if it.chek_complet() :
+            chk_next(it)
+        else :
+            it.wait()
         
 
 
     elif search (r"//(\w/.)",msg) != None:
 
-        mcd = findall  (r"//(\w/.)",msg) [0]
+        mcd = findall  (r"//(\w/.{1,3})",msg) [0]
         cd = mcd.split(r'/')
         if cd[0] == 'b':
             it.smode('editB1')
@@ -477,8 +569,15 @@ def code (id ,msg):
 
 
             if msg == '//True':
-                it.modeed.save()
-                osend ({'body':'دمت گرممم','to':id})
+                try :
+                    it.modeed.save()
+                    
+                except :
+                    it.wait()
+                it.send ({'body':'دمت گررررم'})
+                it.wait()
+                chk_next (it)
+          
             elif msg == '//False':
                 it.smode('editB3')
                 edit (id ,msg)
@@ -503,7 +602,15 @@ def code (id ,msg):
             elif msg == '//Frue' :
                 it.smode ('editF3')
                 edit (id ,msg)
+            elif msg == '//True' :
+                it.word_save()
+                it.send({'body':'ممنونم'})
+                it.wait()
 
+
+    elif it.mode == 'next' :
+
+        chk_next (it)
 
 
 
@@ -555,6 +662,7 @@ for id , msg in input_msg() :
     uupdate (udict)
     print ('Ok!!\n')
     
+    udict[id].lmsg = msg 
     
     if udict[id].mode == 'wait0':
         udict[id].smode('wait')
@@ -567,8 +675,6 @@ for id , msg in input_msg() :
                 chek (id ,msg)
         else :
             code (id ,msg)
-
-
 
 
 

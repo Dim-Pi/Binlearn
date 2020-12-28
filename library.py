@@ -1,5 +1,12 @@
 from mysql.connector import connect 
 from re import sub
+from time import  localtime
+from atoken import DBInformation as DBI
+
+
+
+
+
 
 
 def convertpe (text):
@@ -12,7 +19,7 @@ def convertpe (text):
         'ر' : 'r0r',  'ز' : 'z0z',  'ژ' : 'z0h',  'س' : 's0s',  'ش' : 's0h',  'ص' : 'S0S',
         'ض' : 'Z0Z',  'ط' : 'T0T',  'ظ' : 'Z0z',  'ع' : 'A0A',  'غ' : 'g0H',  'ف' : 'f0f',
         'ق' : 'g0h',  'ک' : 'c0k',  'گ' : 'g0g',  'ل' : 'l0l',  'م' : 'm0m',  'ن' : 'n0n',
-        'و' : 'v0w',  'ه' : 'h0h',  'ی' : 'y0y',  ' ' :  ' '
+        'و' : 'v0w',  'ه' : 'h0h',  'ی' : 'y0y',  ' ' :  ' ' ,  '،' :  ',' 
 
 
     }
@@ -35,8 +42,20 @@ def convertpe (text):
 
 
 
+def cnow ():
+
+    return list(localtime() ) [3]
 
 
+
+
+
+def rsend (tx) :
+    return '\n(send)        '.join (tx.splitlines ())
+
+
+def rrese (tx) :
+    return '\n(receive)     '.join (tx.splitlines ())
 
 
 
@@ -55,7 +74,7 @@ def convertep (text):
         'r0r': 'ر',  'z0z': 'ز',  'z0h': 'ژ',  's0s': 'س',  's0h': 'ش',  'S0S': 'ص',
         'Z0Z': 'ض',  'T0T': 'ط',  'Z0z': 'ظ',  'A0A': 'ع',  'g0H': 'غ',  'f0f': 'ف',
         'g0h': 'ق',  'c0k': 'ک',  'g0g': 'گ',  'l0l': 'ل',  'm0m': 'م',  'n0n': 'ن',  
-        'v0w': 'و',  'h0h': 'ه',  'y0y': 'ی',   
+        'v0w': 'و',  'h0h': 'ه',  'y0y': 'ی',   '،' : ',' 
 
 
 
@@ -102,7 +121,7 @@ def b_per (text) :
         'ر' : 'r0r',  'ز' : 'z0z',  'ژ' : 'z0h',  'س' : 's0s',  'ش' : 's0h',  'ص' : 'S0S',
         'ض' : 'Z0Z',  'ط' : 'T0T',  'ظ' : 'Z0z',  'ع' : 'A0A',  'غ' : 'g0H',  'ف' : 'f0f',
         'ق' : 'g0h',  'ک' : 'c0k',  'گ' : 'g0g',  'ل' : 'l0l',  'م' : 'm0m',  'ن' : 'n0n',
-        'و' : 'v0w',  'ه' : 'h0h',  'ی' : 'y0y',  ' ' : ' '
+        'و' : 'v0w',  'ه' : 'h0h',  'ی' : 'y0y',  '،' :  ','
 
 
     }
@@ -125,6 +144,18 @@ def b_per (text) :
 
 
 
+def gname (id) :
+    sql , db = sync()
+
+    db.execute ("SELECT name FROM user WHERE id='%s'" %id)
+    try :
+        nam = db.fetchall() [0] [0]
+        return nam
+    except :
+        return 'None'
+    
+
+
 
 
 
@@ -134,14 +165,9 @@ def b_per (text) :
 
 
 def give_data ():
-    
-    sql = connect (
-        user='pyprog',
-        password='itpas',
-        database='bot'
-    )
+ 
+    sql , db = sync()
 
-    db = sql.cursor()
     db.execute('select * from words')
     words = db.fetchall()
 
@@ -166,8 +192,17 @@ def give_data ():
 
 
 
+def sync(): 
+    sql = connect (
+        user     =  DBI.usr(),
+        password =  DBI.pas(),
+        database =  DBI.dbn()
 
+    )
 
+    db = sql.cursor()
+
+    return sql ,db    
 
 
 

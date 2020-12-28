@@ -3,11 +3,18 @@ from mysql.connector import connect
 from time import sleep , localtime
 from list import list_get as lget
 from core import send_message as osend
+from atoken import DBInformation as DBI
+
+
+
+
+
+
 
 sql = connect (
-    user = 'pyprog',
-    password = 'itpas',
-    database = 'bot'
+    user = DBI.usr(),
+    password = DBI.pas(),
+    database = DBI.dbn()
 )
 
 
