@@ -5,9 +5,9 @@ path.append('..')
 
 from client import Client
 from library import convertpe , convertep , gname ,rsend , signrun
-from atoken import inlearn
-dmn = inlearn.dmn
-token = inlearn.token
+from atoken import tst 
+dmn = tst.dmn
+token = tst.token
 
 
 

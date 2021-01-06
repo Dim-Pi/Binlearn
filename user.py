@@ -33,7 +33,7 @@ class user :
 
     def __init__ (self,id):
 
-        db.execute('SELECT id ,name ,mode ,ready ,fmode ,fmode2 ,fmode3 ,mode2 ,word1,word2,word3,word4,word5 ,sendtime FROM user where id="%s"'%id)
+        db.execute('SELECT id ,name ,mode ,ready ,fmode ,fmode2 ,fmode3 ,mode2 ,word1,word2,word3,word4,word5 ,sendtime ,modint FROM user where id="%s"'%id)
         ius = db.fetchall() [0]
 
         self.id = id
@@ -50,9 +50,19 @@ class user :
         self.word4 = words_fa(glist(ius ,11 ,None))
         self.word5 = words_fa(glist(ius ,12 ,None))
         self.sendtime = int(ius [13])
+        self.modint = glist(ius ,13 ,0)
         self.modeed = ''
 
     
+
+
+    def add_user (id ,name) :
+
+        
+        db.execute ('INSERT INTO user (id  ,name ,mode ,word6 ,word7 ,word8 ,word9 ,word10 ,sendtime ,modint) VALUES  ("%s"  ,"%s" ,"%s" ,"False" ,"False" ,"False" ,"False" ,"False" ,5 ,0) '  % (id ,name,'name'))
+        sql.commit()
+
+
 
     def users() :
         users1 = {}
@@ -67,11 +77,12 @@ class user :
         return users1 
     
 
-    def add_user (id ,name) :
+    def atsync (self) :
 
-        
-        db.execute ('INSERT INTO user (id  ,name ,mode ,word6 ,word7 ,word8 ,word9 ,word10 ,sendtime) VALUES  ("%s"  ,"%s" ,"%s" ,"False" ,"False" ,"False" ,"False" ,"False" ,5) '  % (id ,name,'name'))
-        sql.commit()
+        sql , db = dbsync()
+        db.execute ("SELECT modint FROM user WHERE  id='%s' " %self.id)
+        myr = db.fetchall () [0]
+        self.modint =  glist(myr ,0 ,0)
 
 
 
@@ -415,13 +426,22 @@ class user :
         return alist
 
 
-
+    def remove (self):
+        sql , db = dbsync ()
+        db.execute("DELETE FROM user WHERE id='%s'"%self.id)
+        sql.commit()
+        print ("deletd %s" %self.name)
+        del (self)
+        sql , db = dbsync ()
 
 
 
     def __del__ (self) :
-        dbsync ()
-        db.execute("delete from user where id='%s'"%self.id)
+        sql , db = dbsync ()
+        db.execute("DELETE FROM user WHERE id='%s'"%self.id)
+        sql.commit()
+        print ("deletd %s" %self.name)
+        sql , db = dbsync ()
 
 
 
@@ -439,16 +459,13 @@ class user :
 o = 1
 def dbsync():
 
-    
     sql = connect (
-        user = 'pyprog',
-        password = 'itpas',
-        host = 'localhost',
-        database = 'bot'
-
- )
-
+        user = DBI.usr(),
+        password = DBI.pas(),
+        database = DBI.dbn()
+    )
     db = sql.cursor()
+    return sql , db 
 
 
 

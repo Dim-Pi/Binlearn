@@ -3,10 +3,11 @@ from sys import path
 path.append('..')
 
 from client import Client
-from library import convertpe , convertep , gname ,rsend ,rrese
+from library import convertpe , convertep , gname ,rsend ,rrese ,signrun
 from user import user 
-from atoken import token 
-
+from atoken import inlearn
+dmn = inlearn.dmn
+token = inlearn.token
 
 
 
@@ -39,6 +40,7 @@ def massages ():
          print ('\n' + gname(msg['from']) + ' :')
          print (rrese(msg['body']))
          msg ['body'] = convertpe (msg ['body'])
+         signrun()
 
 
          yield (msg)
@@ -72,6 +74,7 @@ def send_message (data0):
    data = {'to':data0['to'] , 'type' : 'TEXT' , 'body' : convertep(data0.get('body','')) , 'keyboard':data0.get ('keyboard',[]) }
    print ('\n' + convertep(gname(data0['to'])) + ' :')
    print ( rsend (data['body']) )
+   signrun()
 
    bot1.send_message ( data )
 

@@ -1,8 +1,8 @@
 from sys import path 
 from core import send_message as esend 
-from atoken import dmn
+from atoken import inlearn
 from library import convertep as cep 
-
+dmn = inlearn.dmn
 
 
 def uselkey (udic) :
@@ -24,6 +24,7 @@ def uselkey (udic) :
         if num0 == 3 :
             num0 = 0
             num1 += 1
+            di0.append([])
 
     di0.append([{'text':'بیخیال','command':'//FALSE'}])
   
@@ -44,6 +45,7 @@ def admin2 (udic):
 
     
     admn = udic [dmn()]
+    Fkey = {'text':'بازگشت','command':'//FALSE'}
 
     if admn.lmsg == "//FALSE":
 
@@ -51,35 +53,46 @@ def admin2 (udic):
 
     elif admn.mode == 'admin0':
 
-        admn.adminu = udic[admn.lmsg]
-        sm = "چیکارش کنم؟"
-        if admn.adminu.mode == 'block':
-            key = [[{'text':'Unlock','command':'//block'}]]
-        else:
-            key = [[{'text':'block','command':'//block'}]]
+        try :
+            admn.adminu = udic[admn.lmsg]
+            this = admn.adminu
+            this.atsync()
+            sm = "چیکارش کنم؟"
+            if admn.adminu.mode == 'block':
+                key = [[{'text':'Unlock','command':'//block'}]]
+            else:
+                key = [[{'text':'block','command':'//block'}]]
         
-        key[0].append ({'text':'delete','command':'//Delete'})
+            key[0].append ({'text':'delete','command':'//Delete'})
+            key.append ([{'text':'بریم یه گپی بزنیم','command':'//Gap'}])
+
+
+            key.append ([Fkey])
+
+            sm += ('\n دور : %i' %this.modint )
 
 
 
-        key.append ([{'text':'بازگشت','command':'//FALSE'}])
+
+
+
+            admn.send ({'body':sm,'keyboard':key})
+            admn.smode  ("admin1")
+
+        except:
+
+            admn.send ({'body':'','keyboard':[[Fkey]]})
 
 
 
 
-
-
-
-
-        admn.send ({'body':sm,'keyboard':key})
-        admn.smode  ("admin1")
 
     elif admn.mode == 'admin1':
 
         fun = dict()
-        fun['//block']   = lambda it : it.block()
+        fun['//block']   =  lambda it , udic , adm : it.block()
         fun['//Delete']  =  dell0
-
+        fun['//Gap']     =  gap 
 
         it = admn.adminu
         try:
@@ -87,13 +100,13 @@ def admin2 (udic):
         except :
 
             try:
-                fun[admn.lmsg] (it,udic) 
+                fun[admn.lmsg] (it,udic,admn) 
             except :
                 pass
-
-        key = uselkey (udic)
-        admn.send ({'body':'','keyboard':key})
-        admn.smode ( "admin0" )
+        if not admn.lmsg in ['//Gap'] :
+            key = uselkey (udic)
+            admn.send ({'body':'','keyboard':key})
+            admn.smode ( "admin0" )
 
     else :
         
@@ -106,12 +119,19 @@ def admin2 (udic):
 
 
 
-def dell0 (it,udic) :
-
+def dell0 (it,udic,admn) :
+    
     del (udic[it.id])
+    it.remove()
 
+def gap (use,ud,adm):
 
-
+    adm.lmod = adm.mode
+    use.lmod = use.mode
+    adm.smode('chat')
+    use.smode('chat')
+    adm.chat = use.id
+    use.chat = adm.id  
 
 
 

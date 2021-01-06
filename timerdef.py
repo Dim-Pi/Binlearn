@@ -3,7 +3,7 @@ from mysql.connector import connect
 from time import sleep
 from list import list_get as lget
 from core2 import send_message as osend
-from library import cnow
+from library import cnow , signrun
 from atoken import DBInformation as DBI
 
 
@@ -15,11 +15,6 @@ from atoken import DBInformation as DBI
 
 
 def sync ():
-
-    try:    
-        sql.disconnect()
-    except:
-        pass
 
     sql = connect (
     user = DBI.usr(),
@@ -101,6 +96,8 @@ def read_to_send (id):
 
 
 def read_to_send2 (id):
+
+    sql , db  = sync()
 
     db.execute ('select word1 ,word2 ,word3 ,word4 ,word5 from user where id="%s"' %id)
     num = db.fetchall() [0] 
@@ -185,10 +182,10 @@ def timerdef (imode=0):
 
                     if data[rrr + 3] ==  "Completed!!" :
 
-                        smsg += '\n%i_%s (Completed!!)' %(rrr  , q[0])
+                        smsg += '\n%i) %s (Completed!!)' %(rrr  , q[0])
                     else :
 
-                        smsg += '\n%i_%s' %(rrr , q[0])
+                        smsg += '\n%i) %s' %(rrr , q[0])
 
 
             smsg += "\nدور: %i" %(data[12]+1)
@@ -197,6 +194,7 @@ def timerdef (imode=0):
             db.execute('update  user set flo="1.3" , mode="wait" ,tday="False" where id="%s"' %id )
             sql.commit()
             print ('sended')
+            signrun()
     
 
 

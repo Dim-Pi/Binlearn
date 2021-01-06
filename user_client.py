@@ -4,9 +4,10 @@ from core import massages , send_message
 from user import user
 from mode import mode as md 
 from admin_pro import admin2
-from atoken import dmn 
+from atoken import inlearn
+from chat import chat
 #from library import b_user
-
+dmn = inlearn.dmn
 
 
 
@@ -197,6 +198,12 @@ def massage ():
 
                 send_message ({'body':'چی میگی؟؟','to':input['from']})
                 
+        elif it.mode == 'chat' :
+
+            it.lmsg = input ['body']
+            chat (it,ulist[it.chat])
+            
+
 
         else :
 
