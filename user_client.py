@@ -201,7 +201,13 @@ def massage ():
         elif it.mode == 'chat' :
 
             it.lmsg = input ['body']
-            chat (it,ulist[it.chat])
+            moe = chat (it,ulist[it.chat])
+
+            if moe == '//End':
+
+                it.lmsg = input ['body']
+                admin2(ulist)
+       
             
 
 
