@@ -8,13 +8,13 @@ from timerdef import timerdef
 
 
 
-
+time_to_sleep = 1
 
 
 
 def gen ():
     while True :
-        sleep (5)
+        sleep (time_to_sleep)
         yield  1
 
 
