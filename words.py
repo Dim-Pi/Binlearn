@@ -51,7 +51,7 @@ class word :
             eeee = ''
             for q in self.fa.split(','):
                 eeee += ',%s' %q.strip()
-            self.fa = eeee [:-1]
+            self.fa = eeee [1:]
 
             db.execute ('update words set fa="%s" ,mode="True" where num=%i' %(convertpe(self.fa),self.num))
             sql.commit()
