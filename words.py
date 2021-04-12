@@ -205,7 +205,11 @@ def find_num (fa):
 
 
 
+global word_data
 
+word_data = [ "https://lang.b-amooz.com/en/vocabulary/subcategories/643/lesson-1",
+             "https://lang.b-amooz.com/en/vocabulary/subcategories/1690/lesson-2"
+            ]
 
 
 
@@ -221,10 +225,7 @@ def get_data () :
     from requests import get 
     from time import sleep
 
-    urls = [ "https://lang.b-amooz.com/en/vocabulary/subcategories/643/lesson-1",
-             "https://lang.b-amooz.com/en/vocabulary/subcategories/1690/lesson-2"
-            ]
-
+    url = word_data
 
     bd = lambda x : True if find ('\d+',x) != [] and len (find ('\d+',x) ) == 1 and find ('\d+',x) [0] == str(x) else False
 
