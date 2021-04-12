@@ -225,7 +225,7 @@ def get_data () :
     from requests import get 
     from time import sleep
 
-    url = word_data
+    urls = word_data
 
     bd = lambda x : True if find ('\d+',x) != [] and len (find ('\d+',x) ) == 1 and find ('\d+',x) [0] == str(x) else False
 
